@@ -1,0 +1,7 @@
+mongo:
+  uri: "mongodb://USER:PASSWORD@HOST:27017/?authSource=admin"
+  database: garden8
+
+postgres:
+  dsn: "postgresql://USER:PASSWORD@HOST:6543/postgres?sslmode=require"
+  schema: garden8

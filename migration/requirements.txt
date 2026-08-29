@@ -1,0 +1,4 @@
+# 이전 작업 전용. 앱 실행에는 필요 없다.
+pymongo
+psycopg2-binary
+pyyaml
