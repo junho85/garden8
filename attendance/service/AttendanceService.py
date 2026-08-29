@@ -1,7 +1,6 @@
 import logging
 
 from attendance.config_tools import ConfigTools
-from attendance.mongo_tools import MongoTools
 from attendance.repository.AttendanceRepository import AttendanceRepository
 from datetime import date, timedelta, datetime
 
@@ -23,13 +22,7 @@ class AttendanceService:
 
         self.start_date = self.config_tools.get_start_date()
 
-        self.mongo_tools = MongoTools(
-            host=self.config_tools.config['MONGO']['HOST'],
-            port=self.config_tools.config['MONGO']['PORT'],
-            database=self.config_tools.config['MONGO']['DATABASE'],
-            username=self.config_tools.config['MONGO']['USERNAME'],
-            password=self.config_tools.config['MONGO']['PASSWORD']
-        )
+        self.db_tools = self.config_tools.make_db_tools()
 
     def get_commits_with_ts_by_user(self, user):
         results = []

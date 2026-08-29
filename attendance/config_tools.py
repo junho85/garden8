@@ -27,6 +27,23 @@ class ConfigTools:
         config_dir = "./config/attendance"
         return config_dir
 
+
+    def make_db_tools(self):
+        """
+        config.ini 의 [POSTGRES] 로 DBTools 를 만든다.
+        MongoTools 를 대체하는 자리이고, 호출부는 이 메서드만 쓰면 된다.
+        """
+        from attendance.db_tools import DBTools
+        pg = self.config['POSTGRES']
+        return DBTools(
+            host=pg['HOST'],
+            port=pg['PORT'],
+            database=pg['DATABASE'],
+            user=pg['USER'],
+            password=pg['PASSWORD'],
+            schema=pg['SCHEMA'],
+        )
+
     def load_config(self):
         config = configparser.ConfigParser()
         path = os.path.join(self.config_dir, 'config.ini')

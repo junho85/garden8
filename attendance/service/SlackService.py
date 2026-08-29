@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from attendance.config_tools import ConfigTools
-from attendance.mongo_tools import MongoTools
 from attendance.slack_tools import SlackTools
 
 
@@ -19,20 +18,13 @@ class SlackService:
 
         self.users_with_slackname = self.config_tools.get_users()
 
-        self.mongo_tools = MongoTools(
-            host=self.config_tools.config['MONGO']['HOST'],
-            port=self.config_tools.config['MONGO']['PORT'],
-            database=self.config_tools.config['MONGO']['DATABASE'],
-            username=self.config_tools.config['MONGO']['USERNAME'],
-            password=self.config_tools.config['MONGO']['PASSWORD']
-        )
+        self.db_tools = self.config_tools.make_db_tools()
 
     def remove_all_slack_messages(self):
         """
         db 에 수집한 slack 메시지 삭제
         """
-        mongo_collection = self.mongo_tools.get_collection()
-        mongo_collection.remove()
+        self.db_tools.delete_all()
 
     def send_no_show_message(self, attendances, channel='#gardening-for-100days'):
         """

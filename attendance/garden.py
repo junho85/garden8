@@ -1,11 +1,9 @@
 from datetime import date, timedelta, datetime
 
-import pymongo
 import pprint
 
 from attendance.service.SlackService import SlackService
 from attendance.slack_tools import SlackTools
-from attendance.mongo_tools import MongoTools
 from attendance.config_tools import ConfigTools
 
 
@@ -16,13 +14,7 @@ class Garden:
             slack_api_token=self.config_tools.get_slack_api_token(),
             commit_channel_id=self.config_tools.get_commit_channel_id(),
         )
-        self.mongo_tools = MongoTools(
-            host=self.config_tools.config['MONGO']['HOST'],
-            port=self.config_tools.config['MONGO']['PORT'],
-            database=self.config_tools.config['MONGO']['DATABASE'],
-            username=self.config_tools.config['MONGO']['USERNAME'],
-            password=self.config_tools.config['MONGO']['PASSWORD']
-        )
+        self.db_tools = self.config_tools.make_db_tools()
 
         self.slack_client = self.slack_tools.get_slack_client()
         self.slack_commit_channel_id = self.slack_tools.get_commit_channel_id()
@@ -55,10 +47,8 @@ class Garden:
         print(latest)
         print(datetime.fromtimestamp(latest))
 
-        mongo_collection = self.mongo_tools.get_collection()
-
-        for message in mongo_collection.find(
-                {"ts_for_db": {"$gte": datetime.fromtimestamp(oldest), "$lt": datetime.fromtimestamp(latest)}}):
+        for message in self.db_tools.find_by_ts_for_db_range(
+                datetime.fromtimestamp(oldest), datetime.fromtimestamp(latest)):
             print(message["ts"])
             print(message)
 
@@ -76,8 +66,6 @@ class Garden:
             limit=1000  # default 100
         )
 
-        mongo_collection = self.mongo_tools.get_collection()
-
         messages = response["messages"]
         for message in messages:
             if "attachments" not in message:
@@ -94,11 +82,8 @@ class Garden:
                 continue
             # print(message["author_name"])
 
-            try:
-                mongo_collection.insert_one(message)
-            except pymongo.errors.DuplicateKeyError as err:
-                print(err)
-                continue
+            # ts 가 unique 라 중복은 upsert 로 흡수된다(기존 DuplicateKeyError 자리).
+            self.db_tools.upsert_message(message)
 
         return {
             "start": datetime.fromtimestamp(oldest),

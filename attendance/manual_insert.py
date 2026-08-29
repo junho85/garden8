@@ -2,7 +2,6 @@ from datetime import datetime
 
 from garden import Garden
 
-from attendance.mongo_tools import MongoTools
 from attendance.config_tools import ConfigTools
 
 import pprint
@@ -12,17 +11,10 @@ from urllib.parse import urlparse
 
 config_tools = ConfigTools()
 
-mongo_tools = MongoTools(
-    host=config_tools.config['MONGO']['HOST'],
-    port=config_tools.config['MONGO']['PORT'],
-    database=config_tools.config['MONGO']['DATABASE'],
-    username=config_tools.config['MONGO']['USERNAME'],
-    password=config_tools.config['MONGO']['PASSWORD']
-)
 
 garden = Garden()
 
-mongo_collection = mongo_tools.get_collection()
+db_tools = config_tools.make_db_tools()
 
 
 def get_commit(commit_url):
@@ -84,7 +76,7 @@ def manual_insert(commit_url):
     # exit(-1)
 
     try:
-        result = mongo_collection.insert_one(message)
+        result = db_tools.upsert_message(message)
         pprint.pprint(result)
         print(message)
     except Exception as e:

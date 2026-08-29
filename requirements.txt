@@ -1,6 +1,6 @@
 slack_sdk
 Django
-pymongo
+psycopg2-binary
 pyyaml
 python-markdown-slack
 requests
