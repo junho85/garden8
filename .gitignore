@@ -5,4 +5,4 @@ venv
 .idea
 
 # 이전 작업 설정 (mongo·supabase 자격증명)
-migration/migration_config.yaml
+archive/migration/migration_config.yaml
