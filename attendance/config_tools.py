@@ -30,11 +30,11 @@ class ConfigTools:
 
     def make_db_tools(self):
         """
-        config.ini 의 [POSTGRES] 로 DBTools 를 만든다.
+        config.ini 의 [DATABASE] 로 DBTools 를 만든다.
         MongoTools 를 대체하는 자리이고, 호출부는 이 메서드만 쓰면 된다.
         """
         from attendance.db_tools import DBTools
-        pg = self.config['POSTGRES']
+        pg = self.config['DATABASE']
         return DBTools(
             host=pg['HOST'],
             port=pg['PORT'],
