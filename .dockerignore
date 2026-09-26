@@ -1,0 +1,24 @@
+# 비밀 설정 — 컨테이너에는 GARDEN_CONFIG_DIR 로 마운트한다. 이미지는 public 이다
+config/attendance/config.ini
+config/attendance/users.yaml
+
+# 런타임에 쓰지 않는다. archive/migration 에는 migration_config.yaml(자격증명)·mongo 덤프가 있다
+archive/
+docs/
+
+# Git
+.git
+.gitignore
+
+# Python — 하위 폴더까지 빼려면 **/ 가 필요하다 (없으면 최상위만 해당)
+**/__pycache__
+**/*.pyc
+**/*.pyo
+venv/
+.venv*/
+db.sqlite3
+
+# IDE·OS
+.idea/
+.vscode/
+**/.DS_Store
